@@ -1,23 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
 
 function App() {
+  const [title, setTitle] = useState("");
+  const [tasks, setTasks] = useState(["Do dishes", "Buy milk"]);
+
+  useEffect(() => {
+    document.title = `${tasks.length} tasks remaining`;
+  }, [tasks]);
+
+  useEffect(() => {
+    if (tasks.length === 0) {
+      alert("You completed all tasks!");
+    }
+  }, [tasks]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div>
+      <h1>Todo List</h1>
+      <p>Pending tasks: {tasks.length}</p>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          setTasks([title, ...tasks]);
+          setTitle("");
+        }}
+      >
+        <input
+          value={title}
+          type="text"
+          onChange={(event) => {
+            setTitle(event.target.value);
+          }}
+        />
+        <button type="submit">Add</button>
+      </form>
+      <ul>
+        {tasks.map((task) => {
+          return (
+            <li
+              onClick={() => {
+                setTasks(tasks.filter((t) => t !== task));
+              }}
+            >
+              {task}
+            </li>
+          );
+        })}
+      </ul>
+      {tasks.length > 0 ? (
+        <button
+          onClick={() => {
+            setTasks([]);
+          }}
         >
-          Learn React
-        </a>
-      </header>
+          Complete all tasks
+        </button>
+      ) : (
+        <div />
+      )}
     </div>
   );
 }
